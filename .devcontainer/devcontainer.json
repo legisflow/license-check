@@ -1,0 +1,34 @@
+{
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "golang.go",
+        "eamodio.gitlens",
+        "github.vscode-pull-request-github",
+        "github.copilot-labs",
+        "github.copilot",
+        "editorconfig.editorconfig"
+      ],
+
+      "settings": {
+        "gopls": {
+          "ui.semanticTokens": true
+        },
+        "go.lintTool": "golangci-lint"
+      }
+    }
+  },
+
+  "runArgs": [
+    "--userns=keep-id"
+  ],
+
+  "containerEnv": {
+    "HOME": "/home/vscode"
+  },
+
+  "remoteUser": "vscode"
+}
