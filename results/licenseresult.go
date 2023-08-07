@@ -13,7 +13,7 @@ type LicenseResult struct {
 
 func NewLicenseResult() *LicenseResult {
 	return &LicenseResult{
-		name:     "License",
+		name:     "license",
 		packages: []interfaces.PackageMeta{},
 	}
 }

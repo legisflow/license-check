@@ -13,35 +13,28 @@ import (
 )
 
 type RequirementsTxt struct {
-	fileName string
-	file     string
 }
 
 // NewRequirementsTxt creates a new instance of the RequirementsTxt struct
-// It reads the file and stores the content in the struct
-// It returns nil and error in case the file cannot be read
-func NewRequirementsTxt(fileName string) (interfaces.DepFile, error) {
+func NewRequirementsTxt() interfaces.DepFile {
+	return &RequirementsTxt{}
+}
+
+func (r *RequirementsTxt) GetDepFileType() string {
+	return "python/requirements.txt"
+}
+
+func (r *RequirementsTxt) GetRepository() interfaces.PackageRepository {
+	return NewPyPI("PyPI", PyPIURL)
+}
+
+func (r *RequirementsTxt) GetDependencies(ctx context.Context, fileName string) (<-chan string, error) {
 	data, err := ioutil.ReadFile(fileName)
 	if err != nil {
 		return nil, err
 	}
 
-	return &RequirementsTxt{
-		fileName: fileName,
-		file:     string(data),
-	}, nil
-}
-
-func (r *RequirementsTxt) GetDepFileName() string {
-	return r.fileName
-}
-
-func (r *RequirementsTxt) GetDepFileType() string {
-	return "requirements.txt"
-}
-
-func (r *RequirementsTxt) GetDependencies(ctx context.Context) <-chan string {
-	stringReader := strings.NewReader(r.file)
+	stringReader := strings.NewReader(string(data))
 	bufScanner := bufio.NewScanner(stringReader)
 	depChan := make(chan string)
 
@@ -60,5 +53,5 @@ func (r *RequirementsTxt) GetDependencies(ctx context.Context) <-chan string {
 		}
 	}()
 
-	return depChan
+	return depChan, nil
 }

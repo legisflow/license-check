@@ -46,7 +46,7 @@ type projectURL struct {
 // Nothing crazy, just struct init, no call to the API
 func NewPyPI(name string, pypiURL string) interfaces.PackageRepository {
 	return &PyPI{
-		name: name,
+		name: "PyPI",
 		url:  pypiURL,
 	}
 }
