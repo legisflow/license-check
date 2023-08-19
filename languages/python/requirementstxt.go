@@ -11,7 +11,7 @@ import (
 )
 
 type Requirement struct {
-	Line []*Line `@@*`
+	Line []Line `@@*`
 }
 
 type Line struct {
@@ -46,16 +46,14 @@ type Environ struct {
 }
 
 type RequirementsTxt struct {
-	lexer  *lexer.StatefulDefinition
 	parser *participle.Parser[Requirement]
 }
 
-// NewRequirementsTxt creates a new instance of the RequirementsTxt struct
-func NewRequirementsTxt() interfaces.DepFile {
+func newRequirementsTxtParser() *participle.Parser[Requirement] {
 	requirementLexer := lexer.MustSimple([]lexer.SimpleRule{
 		{`Comment`, `#.*`},
 		{`Command`, `--|-`},
-		{`Download`, `((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[.\!\/\\w]*))?)`},
+		{`Download`, `((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&%@.\w_]*)#?(?:[.\!\/\\w]*))?)`},
 		{`Ident`, `[a-zA-Z_][a-zA-Z_0-9\-.]*`},
 		{`Operator`, `==|!=|~=|>=|>|<=|<`},
 		{`VersionValue`, `[0-9\.\*]+`},
@@ -71,9 +69,13 @@ func NewRequirementsTxt() interfaces.DepFile {
 		participle.Elide("Whitespace", "Comment"),
 	)
 
+	return requirementParser
+}
+
+// NewRequirementsTxt creates a new instance of the RequirementsTxt struct
+func NewRequirementsTxt() interfaces.DepFile {
 	return &RequirementsTxt{
-		lexer:  requirementLexer,
-		parser: requirementParser,
+		parser: newRequirementsTxtParser(),
 	}
 }
 
